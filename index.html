@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0a0f0d" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>הגל הירוק - עדכונים בזמן אמת</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070b09;
+      --bg-card: #101814;
+      --bg-card-hover: #15201b;
+      --green-primary: #00e676;
+      --green-dark: #008f47;
+      --green-glow: rgba(0, 230, 118, 0.22);
+      --text-main: #f3f7f5;
+      --text-muted: #93a89d;
+      --border-color: rgba(0, 230, 118, 0.16);
+      --danger: #ff4d4f;
+      --accent-blue: #38bdf8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Rubik', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding-bottom: 85px;
+      overflow-x: hidden;
+    }
+
+    /* Top App Bar */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7, 11, 9, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--green-primary), var(--green-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 18px;
+      color: #04120a;
+      box-shadow: 0 0 16px var(--green-glow);
+    }
+
+    .brand-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      background: linear-gradient(90deg, #ffffff, #a7f3d0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      color: var(--green-primary);
+      font-weight: 600;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.2s;
+    }
+
+    .icon-btn:active {
+      transform: scale(0.94);
+    }
+
+    .admin-badge {
+      display: none;
+      background: var(--green-primary);
+      color: #03140b;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 9px;
+      border-radius: 8px;
+    }
+
+    .admin-badge.active {
+      display: inline-block;
+    }
+
+    /* Push Notification Banner Simulation */
+    .push-banner {
+      position: fixed;
+      top: -120px;
+      left: 12px;
+      right: 12px;
+      max-width: 480px;
+      margin: 0 auto;
+      background: #141f1a;
+      border: 1px solid var(--green-primary);
+      border-radius: 16px;
+      padding: 12px 14px;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.75), 0 0 20px var(--green-glow);
+      transition: top 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .push-banner.show {
+      top: 14px;
+    }
+
+    .push-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
+      background: var(--green-primary);
+      color: #04120a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .push-content {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .push-app-name {
+      font-size: 11px;
+      color: var(--green-primary);
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .push-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .push-body {
+      font-size: 12px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 540px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .tab-section {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .tab-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Category Filter Pills */
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      margin-bottom: 8px;
+      scrollbar-width: none;
+    }
+    .filter-row::-webkit-scrollbar { display: none; }
+
+    .pill {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .pill.active {
+      background: var(--green-primary);
+      color: #04120a;
+      border-color: var(--green-primary);
+      font-weight: 700;
+    }
+
+    /* Empty Feed State */
+    .empty-state {
+      background: var(--bg-card);
+      border: 1px dashed var(--border-color);
+      border-radius: 18px;
+      padding: 40px 20px;
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    .empty-state-icon {
+      font-size: 42px;
+      margin-bottom: 12px;
+    }
+
+    .empty-state h3 {
+      font-size: 17px;
+      margin-bottom: 6px;
+      color: #fff;
+    }
+
+    .empty-state p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Update Card */
+    .feed-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 14px;
+      position: relative;
+      transition: 0.2s;
+    }
+
+    .feed-card.pinned {
+      border-color: var(--green-primary);
+      box-shadow: 0 0 18px rgba(0, 230, 118, 0.08);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .tag {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: rgba(0, 230, 118, 0.14);
+      color: var(--green-primary);
+    }
+
+    .tag.breaking {
+      background: rgba(255, 77, 79, 0.18);
+      color: #ff6b6b;
+    }
+
+    .tag.transfers {
+      background: rgba(56, 189, 248, 0.16);
+      color: #38bdf8;
+    }
+
+    .card-time {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+
+    .card-body {
+      font-size: 14px;
+      color: #d6e2dc;
+      line-height: 1.55;
+      white-space: pre-line;
+      margin-bottom: 12px;
+    }
+
+    .card-image {
+      width: 100%;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      max-height: 260px;
+      object-fit: cover;
+      border: 1px solid var(--border-color);
+    }
+
+    .card-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0, 230, 118, 0.12);
+      color: var(--green-primary);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 13px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      border: 1px solid rgba(0, 230, 118, 0.25);
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .like-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .like-btn.liked {
+      color: var(--green-primary);
+    }
+
+    .delete-post-btn {
+      background: rgba(255, 77, 79, 0.15);
+      color: #ff6b6b;
+      border: 1px solid rgba(255, 77, 79, 0.3);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* 365Scores Section */
+    .scores-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+
+    .scores-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .scores-badge {
+      background: #1d4ed8;
+      color: #fff;
+      font-weight: 800;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 8px;
+    }
+
+    .btn-365 {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 13px;
+      border-radius: 13px;
+      margin-top: 12px;
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.3);
+    }
+
+    .iframe-wrapper {
+      width: 100%;
+      height: 520px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      background: #0d1310;
+      margin-top: 12px;
+    }
+
+    .iframe-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Admin Panel Styling */
+    .admin-box {
+      background: var(--bg-card);
+      border: 1px solid var(--green-primary);
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    .admin-box h2 {
+      font-size: 18px;
+      color: var(--green-primary);
+      margin-bottom: 6px;
+    }
+
+    .form-group {
+      margin-bottom: 13px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      width: 100%;
+      background: #080d0b;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .form-control:focus {
+      border-color: var(--green-primary);
+    }
+
+    textarea.form-control {
+      min-height: 95px;
+      resize: vertical;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0, 230, 118, 0.08);
+      border: 1px solid rgba(0, 230, 118, 0.22);
+      padding: 11px 14px;
+      border-radius: 12px;
+      margin-bottom: 14px;
+      cursor: pointer;
+    }
+
+    .checkbox-row input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--green-primary);
+    }
+
+    .primary-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--green-primary), var(--green-dark));
+      color: #03140b;
+      border: none;
+      border-radius: 13px;
+      padding: 14px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 6px 20px var(--green-glow);
+      transition: 0.2s;
+    }
+
+    .primary-btn:active {
+      transform: scale(0.98);
+    }
+
+    .secondary-btn {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 11px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    /* Social Channels Card */
+    .social-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .social-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 15px;
+      padding: 16px;
+      text-align: center;
+      text-decoration: none;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .social-card span {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(10, 15, 13, 0.96);
+      backdrop-filter: blur(14px);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 6px 12px;
+      z-index: 100;
+    }
+
+    .nav-item {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      padding: 4px 12px;
+      border-radius: 12px;
+      transition: 0.2s;
+    }
+
+    .nav-item .nav-icon {
+      font-size: 20px;
+    }
+
+    .nav-item.active {
+      color: var(--green-primary);
+    }
+
+    /* Login Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 500;
+      padding: 16px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: #101814;
+      border: 1px solid var(--green-primary);
+      border-radius: 20px;
+      padding: 22px;
+      width: 100%;
+      max-width: 390px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-card h3 {
+      font-size: 19px;
+      margin-bottom: 6px;
+      color: var(--green-primary);
+    }
+
+    .modal-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .error-msg {
+      color: #ff6b6b;
+      font-size: 12px;
+      margin-bottom: 10px;
+      display: none;
+    }
+
+    .preview-notif {
+      background: #0b120e;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 14px;
+    }
+
+    .preview-notif-label {
+      font-size: 10px;
+      color: var(--green-primary);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Live Push Notification Banner -->
+  <div id="pushBanner" class="push-banner">
+    <div class="push-icon">🟢</div>
+    <div class="push-content">
+      <div class="push-app-name">
+        <span>הגל הירוק • מבזק חדש</span>
+        <span>עכשיו</span>
+      </div>
+      <div id="pushBannerTitle" class="push-title">כותרת העדכון</div>
+      <div id="pushBannerBody" class="push-body">תוכן העדכון יופיע כאן</div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="brand-box" id="logoTrigger" title="הגל הירוק">
+      <div class="brand-logo">גל</div>
+      <div>
+        <div class="brand-title">הגל הירוק</div>
+        <div class="brand-sub">עדכונים חמים בזמן אמת</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <span id="adminStatusBadge" class="admin-badge">מנהל מחובר</span>
+      <button class="icon-btn" id="notifPermBtn" title="הפעל התראות">🔔</button>
+      <button class="icon-btn" id="openAdminBtn" title="כניסת מנהל">🔐</button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container">
+
+    <!-- TAB 1: Updates Feed -->
+    <section id="tab-feed" class="tab-section active">
+      <div class="filter-row">
+        <button class="pill active" data-filter="all">הכל</button>
+        <button class="pill" data-filter="breaking">🚨 מבזקים</button>
+        <button class="pill" data-filter="transfers">✍️ העברות</button>
+        <button class="pill" data-filter="general">⚽ עדכונים</button>
+        <button class="pill" data-filter="live">🎥 לייבים והגרלות</button>
+      </div>
+
+      <div id="feedContainer"></div>
+    </section>
+
+    <!-- TAB 2: 365Scores Official -->
+    <section id="tab-365" class="tab-section">
+      <div class="scores-card">
+        <div class="scores-header">
+          <div>
+            <h3 style="font-size: 17px; margin-bottom: 2px;">תוצאות וציונים • 365Scores</h3>
+            <p style="font-size: 12px; color: var(--text-muted);">נתונים רשמיים של מכבי חיפה בזמן אמת</p>
+          </div>
+          <span class="scores-badge">365Scores</span>
+        </div>
+
+        <p style="font-size: 13px; color: #d6e2dc; line-height: 1.5;">
+          כאן מופיעים לוח המשחקים, התוצאות החיות וציוני השחקנים הרשמיים של מכבי חיפה ישירות מתוך <strong>365Scores</strong> ללא נתונים מומצאים.
+        </p>
+
+        <a href="https://www.365scores.com/he/football/team/maccabi-haifa-2353" target="_blank" rel="noopener noreferrer" class="btn-365">
+          📊 פתח את עמוד מכבי חיפה ב-365Scores
+        </a>
+
+        <div class="iframe-wrapper">
+          <iframe src="https://www.365scores.com/he/football/team/maccabi-haifa-2353" title="365Scores Maccabi Haifa" loading="lazy"></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: Channels & Admin Quick Access -->
+    <section id="tab-channels" class="tab-section">
+      <div class="scores-card">
+        <h3 style="font-size: 17px; margin-bottom: 6px;">הערוצים הרשמיים של הגל הירוק</h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+          עקבו אחרינו ביוטיוב ובטיקטוק לשידורים חיים, סרטונים והגרלות!
+        </p>
+        <div class="social-grid">
+          <a href="https://www.youtube.com" target="_blank" class="social-card">
+            <div style="font-size: 26px;">▶️</div>
+            <span>יוטיוב הגל הירוק</span>
+          </a>
+          <a href="https://www.tiktok.com" target="_blank" class="social-card">
+            <div style="font-size: 26px;">🎵</div>
+            <span>טיקטוק הגל הירוק</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Admin Control Panel (Visible only when logged in) -->
+      <div id="adminPanelContainer" style="display: none;">
+        <div class="admin-box">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h2>🛠️ שליחת עדכון והתראה</h2>
+            <button id="logoutBtn" style="background: rgba(255,77,79,0.15); color: #ff6b6b; border: none; padding: 5px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;">התנתק</button>
+          </div>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
+            מחובר בתור: <strong>yahavazulay1@gmail.com</strong>
+          </p>
+
+          <div class="form-group">
+            <label>קטגוריית העדכון</label>
+            <select id="postCategory" class="form-control">
+              <option value="breaking">🚨 מבזק חם</option>
+              <option value="transfers">✍️ העברות ודיווחים</option>
+              <option value="general">⚽ עדכון שוטף</option>
+              <option value="live">🎥 לייב / הגרלה</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>כותרת העדכון (תופיע גם בהתראה)</label>
+            <input type="text" id="postTitle" class="form-control" placeholder="לדוגמה: פרסום ראשון: הרכב מכבי חיפה להערב!" />
+          </div>
+
+          <div class="form-group">
+            <label>תוכן ההודעה</label>
+            <textarea id="postBody" class="form-control" placeholder="כתוב כאן את כל הפרטים לעוקבים..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>קישור מצורף (אופציונלי - יוטיוב / טיקטוק / כתבה)</label>
+            <input type="url" id="postLink" class="form-control" placeholder="https://..." />
+          </div>
+
+          <div class="form-group">
+            <label>קישור לתמונה (אופציונלי)</label>
+            <input type="url" id="postImage" class="form-control" placeholder="https://..." />
+          </div>
+
+          <!-- Notification Preview -->
+          <div class="preview-notif">
+            <div class="preview-notif-label">תצוגה מקדימה להתראת פוש בטלפון (כמו 365):</div>
+            <div style="font-size: 13px; font-weight: 700; color: #fff;" id="previewTitle">🟢 הגל הירוק • מבזק חדש</div>
+            <div style="font-size: 12px; color: var(--text-muted);" id="previewBody">הטקסט שתכתוב יופיע בהתראה אצל העוקבים</div>
+          </div>
+
+          <label class="checkbox-row">
+            <input type="checkbox" id="sendPushCheck" checked />
+            <span style="font-size: 13px; font-weight: 600;">שלח התראת פוש (Push) לכל המכשירים</span>
+          </label>
+
+          <label class="checkbox-row">
+            <input type="checkbox" id="pinPostCheck" />
+            <span style="font-size: 13px; font-weight: 600;">נעץ עדכון בראש הפיד</span>
+          </label>
+
+          <button id="publishBtn" class="primary-btn">🚀 פרסם עדכון ושלח התראה</button>
+
+          <details style="margin-top: 16px; background: #080d0b; padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);">
+            <summary style="font-size: 13px; font-weight: 700; color: var(--green-primary); cursor: pointer;">⚙️ הגדרות OneSignal להתראות אמת ברקע</summary>
+            <div style="margin-top: 10px;">
+              <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">
+                כדי שהתראות יקפצו גם כשהאפליקציה סגורה לחלוטין (APK), הדבק כאן את ה-App ID ו-REST API Key שלך מ-OneSignal.com:
+              </p>
+              <input type="text" id="osAppId" class="form-control" placeholder="OneSignal App ID" style="margin-bottom: 8px; font-size: 12px;" />
+              <input type="password" id="osApiKey" class="form-control" placeholder="OneSignal REST API Key" style="margin-bottom: 8px; font-size: 12px;" />
+              <button id="saveOsBtn" class="secondary-btn">שמור מפתחות התראות</button>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div id="adminLoginPrompt" class="scores-card" style="text-align: center;">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">ניהול העמוד והעלאת עדכונים למנהל בלבד</p>
+        <button id="promptLoginBtn" class="secondary-btn" style="margin-top: 0;">🔐 התחברות מנהל העמוד</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-tab="tab-feed">
+      <span class="nav-icon">📰</span>
+      <span>עדכונים</span>
+    </button>
+    <button class="nav-item" data-tab="tab-365">
+      <span class="nav-icon">⚽</span>
+      <span>365 ציונים</span>
+    </button>
+    <button class="nav-item" data-tab="tab-channels">
+      <span class="nav-icon">📲</span>
+      <span>ערוצים וניהול</span>
+    </button>
+  </nav>
+
+  <!-- Admin Login Modal -->
+  <div id="loginModal" class="modal-overlay">
+    <div class="modal-card">
+      <h3>🔐 כניסת מנהל - הגל הירוק</h3>
+      <p>הזן את פרטי המנהל כדי לשלוח עדכונים והתראות לעוקבים.</p>
+      
+      <div class="form-group">
+        <label>אימייל מנהל</label>
+        <input type="email" id="loginEmail" class="form-control" placeholder="הזן אימייל..." dir="ltr" />
+      </div>
+
+      <div class="form-group">
+        <label>סיסמה</label>
+        <input type="password" id="loginPassword" class="form-control" placeholder="הזן סיסמה..." dir="ltr" />
+      </div>
+
+      <div id="loginError" class="error-msg">אימייל או סיסמה שגויים. נסה שוב.</div>
+
+      <button id="submitLoginBtn" class="primary-btn">התחבר למסך הניהול</button>
+      <button id="closeModalBtn" class="secondary-btn">ביטול</button>
+    </div>
+  </div>
+
+  <script>
+    // --- Admin Credentials ---
+    const ADMIN_EMAIL = "yahavazulay1@gmail.com";
+    const ADMIN_PASS = "Kobi1985";
+
+    // --- State ---
+    let isAdmin = sessionStorage.getItem("hagal_admin") === "true";
+    let posts = JSON.parse(localStorage.getItem("hagal_posts") || "[]");
+    let likedPosts = JSON.parse(localStorage.getItem("hagal_likes") || "[]");
+    let currentFilter = "all";
+
+    // Load saved OneSignal keys if configured
+    document.getElementById("osAppId").value = localStorage.getItem("os_app_id") || "";
+    document.getElementById("osApiKey").value = localStorage.getItem("os_api_key") || "";
+
+    // --- Elements ---
+    const feedContainer = document.getElementById("feedContainer");
+    const loginModal = document.getElementById("loginModal");
+    const loginEmail = document.getElementById("loginEmail");
+    const loginPassword = document.getElementById("loginPassword");
+    const loginError = document.getElementById("loginError");
+    const adminPanelContainer = document.getElementById("adminPanelContainer");
+    const adminLoginPrompt = document.getElementById("adminLoginPrompt");
+    const adminStatusBadge = document.getElementById("adminStatusBadge");
+
+    // --- Navigation Tabs ---
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab-section").forEach(sec => sec.classList.remove("active"));
+      document.querySelectorAll(".nav-item").forEach(btn => btn.classList.remove("active"));
+      document.getElementById(tabId).classList.add("active");
+      document.querySelector(`.nav-item[data-tab="${tabId}"]`).classList.add("active");
+    }
+
+    document.querySelectorAll(".nav-item").forEach(btn => {
+      btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+    });
+
+    // --- Filters ---
+    document.querySelectorAll(".pill").forEach(pill => {
+      pill.addEventListener("click", () => {
+        document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+        pill.classList.add("active");
+        currentFilter = pill.dataset.filter;
+        renderFeed();
+      });
+    });
+
+    // --- Render Feed (Clean by default) ---
+    function renderFeed() {
+      const filtered = posts.filter(p => currentFilter === "all" || p.category === currentFilter);
+      
+      // Sort pinned first, then newest
+      filtered.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || b.timestamp - a.timestamp);
+
+      if (filtered.length === 0) {
+        feedContainer.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🟢</div>
+            <h3>אין כרגע עדכונים חדשים</h3>
+            <p>ברגע שיעלה עדכון חדש בעמוד <strong>הגל הירוק</strong>, הוא יופיע כאן מיד ותישלח התראה.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const categoryLabels = {
+        breaking: { text: "🚨 מבזק חם", cls: "breaking" },
+        transfers: { text: "✍️ העברות", cls: "transfers" },
+        general: { text: "⚽ עדכון", cls: "" },
+        live: { text: "🎥 לייב והגרלות", cls: "" }
+      };
+
+      feedContainer.innerHTML = filtered.map(post => {
+        const cat = categoryLabels[post.category] || categoryLabels.general;
+        const isLiked = likedPosts.includes(post.id);
+        const dateStr = new Date(post.timestamp).toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" }) +
+                        " • " + new Date(post.timestamp).toLocaleDateString("he-IL", { day: "2-digit", month: "2-digit" });
+
+        return `
+          <article class="feed-card ${post.pinned ? 'pinned' : ''}">
+            <div class="card-top">
+              <span class="tag ${cat.cls}">${post.pinned ? '📌 נעוץ • ' : ''}${cat.text}</span>
+              <span class="card-time">${dateStr}</span>
+            </div>
+            <h3 class="card-title">${escapeHtml(post.title)}</h3>
+            <div class="card-body">${escapeHtml(post.body)}</div>
+            ${post.image ? `<img src="${escapeHtml(post.image)}" class="card-image" alt="תמונת עדכון" onerror="this.style.display='none'"/>` : ''}
+            ${post.link ? `<a href="${escapeHtml(post.link)}" target="_blank" rel="noopener noreferrer" class="card-link-btn">🔗 פתח קישור מצורף</a>` : ''}
+            <div class="card-footer">
+              <button class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${post.id}')">
+                ${isLiked ? '💚' : '🤍'} <span>${post.likes || 0}</span>
+              </button>
+              ${isAdmin ? `<button class="delete-post-btn" onclick="deletePost('${post.id}')">🗑️ מחק</button>` : ''}
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    window.toggleLike = function(id) {
+      const post = posts.find(p => p.id === id);
+      if (!post) return;
+      if (likedPosts.includes(id)) {
+        likedPosts = likedPosts.filter(item => item !== id);
+        post.likes = Math.max(0, (post.likes || 1) - 1);
+      } else {
+        likedPosts.push(id);
+        post.likes = (post.likes || 0) + 1;
+      }
+      localStorage.setItem("hagal_likes", JSON.stringify(likedPosts));
+      localStorage.setItem("hagal_posts", JSON.stringify(posts));
+      renderFeed();
+    };
+
+    window.deletePost = function(id) {
+      if (!isAdmin) return;
+      posts = posts.filter(p => p.id !== id);
+      localStorage.setItem("hagal_posts", JSON.stringify(posts));
+      renderFeed();
+    };
+
+    // --- Admin Authentication ---
+    function updateAdminUI() {
+      if (isAdmin) {
+        adminPanelContainer.style.display = "block";
+        adminLoginPrompt.style.display = "none";
+        adminStatusBadge.classList.add("active");
+      } else {
+        adminPanelContainer.style.display = "none";
+        adminLoginPrompt.style.display = "block";
+        adminStatusBadge.classList.remove("active");
+      }
+      renderFeed();
+    }
+
+    function openLogin() {
+      if (isAdmin) {
+        switchTab("tab-channels");
+        return;
+      }
+      loginError.style.display = "none";
+      loginModal.classList.add("open");
+    }
+
+    document.getElementById("openAdminBtn").addEventListener("click", openLogin);
+    document.getElementById("promptLoginBtn").addEventListener("click", openLogin);
+    document.getElementById("closeModalBtn").addEventListener("click", () => loginModal.classList.remove("open"));
+
+    // 5 rapid taps on logo also opens admin
+    let tapCount = 0;
+    let tapTimer = null;
+    document.getElementById("logoTrigger").addEventListener("click", () => {
+      tapCount++;
+      clearTimeout(tapTimer);
+      tapTimer = setTimeout(() => { tapCount = 0; }, 1200);
+      if (tapCount >= 5) {
+        tapCount = 0;
+        openLogin();
+      }
+    });
+
+    document.getElementById("submitLoginBtn").addEventListener("click", () => {
+      const emailVal = loginEmail.value.trim().toLowerCase();
+      const passVal = loginPassword.value;
+      if (emailVal === ADMIN_EMAIL.toLowerCase() && passVal === ADMIN_PASS) {
+        isAdmin = true;
+        sessionStorage.setItem("hagal_admin", "true");
+        loginModal.classList.remove("open");
+        loginEmail.value = "";
+        loginPassword.value = "";
+        updateAdminUI();
+        switchTab("tab-channels");
+      } else {
+        loginError.style.display = "block";
+      }
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      isAdmin = false;
+      sessionStorage.removeItem("hagal_admin");
+      updateAdminUI();
+    });
+
+    // --- Live Notification Preview ---
+    const postTitleInput = document.getElementById("postTitle");
+    const postBodyInput = document.getElementById("postBody");
+    postTitleInput.addEventListener("input", () => {
+      document.getElementById("previewTitle").textContent = postTitleInput.value.trim() || "🟢 הגל הירוק • מבזק חדש";
+    });
+    postBodyInput.addEventListener("input", () => {
+      document.getElementById("previewBody").textContent = postBodyInput.value.trim() || "הטקסט שתכתוב יופיע בהתראה אצל העוקבים";
+    });
+
+    // --- Save OneSignal Keys ---
+    document.getElementById("saveOsBtn").addEventListener("click", () => {
+      localStorage.setItem("os_app_id", document.getElementById("osAppId").value.trim());
+      localStorage.setItem("os_api_key", document.getElementById("osApiKey").value.trim());
+      alert("מפתחות OneSignal נשמרו בהצלחה!");
+    });
+
+    // --- Notification Permission & Trigger ---
+    document.getElementById("notifPermBtn").addEventListener("click", async () => {
+      if ("Notification" in window) {
+        const perm = await Notification.requestPermission();
+        if (perm === "granted") {
+          showInAppBanner("ההתראות הופעלו!", "תקבל התראה מיד כשיעלה עדכון חדש בהגל הירוק.");
+        }
+      } else {
+        showInAppBanner("התראות פעילות", "ההתראות מופעלות באפליקציה.");
+      }
+    });
+
+    function showInAppBanner(title, body) {
+      const banner = document.getElementById("pushBanner");
+      document.getElementById("pushBannerTitle").textContent = title;
+      document.getElementById("pushBannerBody").textContent = body;
+      banner.classList.add("show");
+      setTimeout(() => banner.classList.remove("show"), 4800);
+    }
+
+    async function triggerPushNotification(title, body) {
+      // 1. In-app banner
+      showInAppBanner(title, body);
+
+      // 2. Native Browser / WebView Notification
+      if ("Notification" in window && Notification.permission === "granted") {
+        try {
+          new Notification("הגל הירוק • " + title, { body: body });
+        } catch (e) {}
+      }
+
+      // 3. OneSignal REST API (for real background Android APK push notifications)
+      const osAppId = localStorage.getItem("os_app_id");
+      const osApiKey = localStorage.getItem("os_api_key");
+      if (osAppId && osApiKey) {
+        try {
+          await fetch("https://onesignal.com/api/v1/notifications", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json; charset=utf-8",
+              "Authorization": "Basic " + osApiKey
+            },
+            body: JSON.stringify({
+              app_id: osAppId,
+              included_segments: ["Subscribed Users"],
+              headings: { en: title, he: title },
+              contents: { en: body, he: body }
+            })
+          });
+        } catch (err) {
+          console.error("OneSignal Push Error:", err);
+        }
+      }
+    }
+
+    // --- Publish Post ---
+    document.getElementById("publishBtn").addEventListener("click", () => {
+      if (!isAdmin) return;
+      const title = postTitleInput.value.trim();
+      const body = postBodyInput.value.trim();
+      const category = document.getElementById("postCategory").value;
+      const link = document.getElementById("postLink").value.trim();
+      const image = document.getElementById("postImage").value.trim();
+      const sendPush = document.getElementById("sendPushCheck").checked;
+      const pinned = document.getElementById("pinPostCheck").checked;
+
+      if (!title || !body) {
+        alert("נא למלא כותרת ותוכן לעדכון.");
+        return;
+      }
+
+      const newPost = {
+        id: "post_" + Date.now(),
+        title,
+        body,
+        category,
+        link,
+        image,
+        pinned,
+        likes: 0,
+        timestamp: Date.now()
+      };
+
+      posts.unshift(newPost);
+      localStorage.setItem("hagal_posts", JSON.stringify(posts));
+
+      // Clear form
+      postTitleInput.value = "";
+      postBodyInput.value = "";
+      document.getElementById("postLink").value = "";
+      document.getElementById("postImage").value = "";
+      document.getElementById("pinPostCheck").checked = false;
+
+      switchTab("tab-feed");
+      renderFeed();
+
+      if (sendPush) {
+        triggerPushNotification(title, body);
+      }
+    });
+
+    // Init
+    updateAdminUI();
+  </script>
+</body>
+</html>
